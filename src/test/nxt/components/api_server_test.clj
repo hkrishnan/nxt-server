@@ -2,11 +2,12 @@
   (:require [clojure.test :refer :all]
             [io.pedestal.http :as http]
             [nxt.components.api-server :as api-server]
-            [nxt.components.config :refer [map->Config start]]))
+            [nxt.components.config :as config]
+            [com.stuartsierra.component :as component]))
 
 (deftest test-service-map
-  (let [config-component (-> (map->Config {:profile :test})
-                            (start))
+  (let [config-component (-> (config/new-config :test)
+                            (component/start))
         service-map (api-server/service-map config-component)]
     (testing "Service map contains required keys"
       (is (contains? service-map ::http/routes))
@@ -15,16 +16,16 @@
       (is (contains? service-map ::http/host)))))
 
 (deftest test-api-server-lifecycle
-  (let [config (-> (map->Config {:profile :test})
-                   (start))
+  (let [config (-> (config/new-config :test)
+                   (component/start))
         api-server (api-server/new-api-server)]
     
     (testing "API server starts correctly"
       (let [started (-> api-server
                        (assoc :config config)
-                       (api-server/start))]
+                       (component/start))]
         (is (some? (:service started)))
         
         (testing "and stops correctly"
-          (let [stopped (api-server/stop started)]
+          (let [stopped (component/stop started)]
             (is (nil? (:service stopped)))))))))
