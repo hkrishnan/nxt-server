@@ -53,4 +53,4 @@
         (let [response (helpers/test-request service :get "/")
               headers (:headers response)]
           (is (get headers "Content-Type"))
-          (is (get headers "Content-Security-Policy"))))))
+          (is (get headers "Content-Security-Policy")))))))
