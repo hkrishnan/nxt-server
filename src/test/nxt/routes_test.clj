@@ -35,6 +35,6 @@
     (let [routes routes/routes]
       (is (seq routes))
       (let [home-route (first routes)]
-        (is (= "/" (get-in home-route [:path])))
-        (is (= :get (get-in home-route [:method])))
-        (is (= :home (get-in home-route [:route-name])))))))
+        (is (= "/" (:path home-route)))
+        (is (= :get (:method home-route)))
+        (is (= :home (:route-name home-route)))))))
