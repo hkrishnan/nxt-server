@@ -1,0 +1,36 @@
+{:app-name "NXT Server"
+ 
+ :server
+ {:port #long #or [#env PORT 3000]
+  :host #or [#env HOST "0.0.0.0"]
+  :join? false}
+ 
+ ;; Common configuration shared across environments
+ :http
+ {:allowed-origins #profile
+  {:dev ["http://localhost:3000"]
+   :test ["http://localhost:3000"]
+   :prod [#env ALLOWED_ORIGINS]}
+  
+  :secure-headers {"Content-Security-Policy" 
+                  ["default-src 'self'"
+                   "script-src 'self' 'unsafe-inline' https://unpkg.com"
+                   "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net"
+                   "img-src 'self' data:"]}}
+
+ ;; Logging configuration
+ :log
+ {:level #profile
+  {:dev :debug
+   :test :warn
+   :prod :info}
+  :console? #profile
+  {:dev true
+   :test false
+   :prod false}}
+ 
+ ;; Override with profile-specific config
+ :env #profile
+ {:dev "development"
+  :test "test" 
+  :prod "production"}}

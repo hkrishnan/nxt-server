@@ -1,0 +1,14 @@
+{:env :dev
+
+ ;; Import base configuration 
+ :base #include "base.edn"
+ 
+ ;; Development specific overrides
+ :server
+ {:port 3000
+  :join? false}
+ 
+ :dev-options
+ {:reload-paths ["src/main" "src/resources"]
+  :watch-paths ["src/main" "src/resources"]
+  :refresh-dirs ["src/main" "src/resources"]}}

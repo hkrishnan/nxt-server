@@ -1,0 +1,12 @@
+{:env :prod
+ 
+ ;; Import base configuration
+ :base #include "base.edn"
+ 
+ ;; Production specific overrides
+ :server
+ {:port #long #env PORT
+  :join? true}
+ 
+ :http
+ {:allowed-origins #env ALLOWED_ORIGINS}}

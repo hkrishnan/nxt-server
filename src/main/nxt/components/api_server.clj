@@ -4,10 +4,15 @@
             [nxt.routes :as routes]))
 
 (defn service-map [config]
-  {::http/routes routes/routes
-   ::http/type   :jetty
-   ::http/port   (get-in config [:server :port])
-   ::http/join?  (get-in config [:server :join?])})
+  (let [server-config (-> config :config :server)]
+    {::http/routes routes/routes
+     ::http/type   :jetty
+     ::http/host   (:host server-config)
+     ::http/port   (:port server-config)
+     ::http/join?  (:join? server-config)
+     ;; Add CORS configuration if needed
+     ::http/allowed-origins
+     (constantly (get-in config [:config :http :allowed-origins]))}))
 
 (defrecord ApiServer [config service]
   component/Lifecycle
@@ -28,5 +33,5 @@
       (http/stop service))
     (assoc component :service nil)))
 
-(defn new-api-server [config]
-  (map->ApiServer {:config config}))
+(defn new-api-server []
+  (map->ApiServer {}))

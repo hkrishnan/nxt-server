@@ -5,6 +5,7 @@ A Clojure web application using:
 - Stuart Sierra Component (system management)
 - HTMX (dynamic HTML interactions)
 - Bulma CSS (styling)
+- Aero (configuration management)
 
 ## Development
 
@@ -34,13 +35,27 @@ A Clojure web application using:
 - `(dev/reset)` - Reset the system (stop, reload code, start)
 - `(dev/system-status)` - Check system status
 - `(dev/print-routes)` - List available routes
+- `(dev/print-config)` - View current configuration
+
+### Configuration
+
+Configuration is managed using Aero and separated by environment:
+
+- Development: `resources/config/nxt/development.edn`
+- Production: `resources/config/nxt/production.edn`
+- Base config: `resources/config/nxt/base.edn`
 
 ### Production
 
 To run in production:
 
 ```bash
-clj -M -m nxt.system
+# Set required environment variables
+export PORT=8080
+export ALLOWED_ORIGINS="https://yoursite.com"
+
+# Run with production profile
+clj -M -m nxt.system production
 ```
 
 ## License
