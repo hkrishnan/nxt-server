@@ -2,59 +2,47 @@
   (:require [clojure.tools.namespace.repl :refer [refresh refresh-all]]
             [io.pedestal.http :as http]
             [io.pedestal.test :as test]
-            [com.stuartsierra.component.repl :refer [reset set-init start stop system]]
             [nxt.system :as system]
             [clojure.pprint :refer [pprint]]))
 
-;; System initialization
-(defn new-dev-system []
+(defonce system nil)
+
+(defn new-system []
   (system/new-system :development))
 
-;; Config helpers
-(defn config []
-  (-> system :config :config))
+(defn init []
+  (alter-var-root #'system (constantly (new-system))))
 
-(defn print-config []
-  (println "\nCurrent Configuration:")
-  (println "----------------------")
-  (pprint (config)))
+(defn start []
+  (alter-var-root #'system system/start))
 
-;; Testing helpers
-(defn test-request [verb url & [{:as options}]]
-  (let [service (-> system :api-server :service ::http/service-fn)]
-    (test/response-for service verb url options)))
+(defn stop []
+  (alter-var-root #'system system/stop))
 
-;; Print the available endpoints
-(defn routes []
-  (let [routes (-> system :api-server :service ::http/routes)]
-    (doseq [{:keys [path method route-name]} routes]
-      (println (format "%-7s %-20s %s" (name method) path route-name)))))
+(defn go []
+  (init)
+  (start))
 
-;; System status
+(defn reset []
+  (stop)
+  (refresh :after 'dev/go))
+
+;; Helper functions
 (defn status []
   (println "\nSystem Status:")
   (println "------------------")
-  (println "Environment:" (-> (config) :env name))
+  (println "Environment:" (-> system :config :config :env name))
   (println "Server Config:")
-  (pprint (-> (config) :server))
+  (pprint (-> system :config :config :server))
   (let [service (-> system :api-server :service)]
     (println "Server Running:" (boolean service))))
 
-(comment
-  ;; Basic system lifecycle
-  (start)  ; Start the system
-  (stop)   ; Stop the system
-  (reset)  ; Stop, reload, and start the system
-  
-  ;; Development helpers
-  (status)        ; Check system status
-  (print-config)  ; View current config
-  (routes)        ; See available routes
-  
-  ;; Test endpoints
-  (test-request :get "/")
-  
-  ;; Example of making changes and reloading
-  (do 
-    (refresh)    ; Reload changed namespaces
-    (reset)))    ; Restart the system
+(defn routes []
+  (when-let [routes (-> system :api-server :service ::http/routes)]
+    (doseq [{:keys [path method route-name]} routes]
+      (println (format "%-7s %-20s %s" (name method) path route-name)))))
+
+(defn config []
+  (println "\nCurrent Configuration:")
+  (println "----------------------")
+  (pprint (-> system :config :config)))

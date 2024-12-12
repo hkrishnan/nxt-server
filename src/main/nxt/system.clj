@@ -14,6 +14,13 @@
                   (api-server/new-api-server)
                   [:config]))))
 
+(defn start [system]
+  (component/start system))
+
+(defn stop [system]
+  (when system
+    (component/stop system)))
+
 (defn -main [& args]
   (let [profile (keyword (or (first args) "production"))]
     (-> (new-system profile)
