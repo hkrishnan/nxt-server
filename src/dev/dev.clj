@@ -10,8 +10,6 @@
 (defn new-dev-system []
   (system/new-system :development))
 
-(set-init new-dev-system)
-
 ;; Config helpers
 (defn config []
   (-> system :config :config))
@@ -27,13 +25,13 @@
     (test/response-for service verb url options)))
 
 ;; Print the available endpoints
-(defn print-routes []
+(defn routes []
   (let [routes (-> system :api-server :service ::http/routes)]
     (doseq [{:keys [path method route-name]} routes]
       (println (format "%-7s %-20s %s" (name method) path route-name)))))
 
 ;; System status
-(defn system-status []
+(defn status []
   (println "\nSystem Status:")
   (println "------------------")
   (println "Environment:" (-> (config) :env name))
@@ -49,9 +47,9 @@
   (reset)  ; Stop, reload, and start the system
   
   ;; Development helpers
-  (system-status)   ; Check system status
-  (print-config)    ; View current config
-  (print-routes)    ; See available routes
+  (status)        ; Check system status
+  (print-config)  ; View current config
+  (routes)        ; See available routes
   
   ;; Test endpoints
   (test-request :get "/")
