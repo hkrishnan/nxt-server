@@ -1,0 +1,21 @@
+# Clojure
+.cpcache/
+.nrepl-port
+.clj-kondo/
+.lsp/
+
+# IDE
+.idea/
+*.iml
+.calva/
+.vscode/
+.lein*
+
+# Mac
+.DS_Store
+
+# Log files
+*.log
+
+# Generated Files
+target/
