@@ -2,7 +2,7 @@
   (:require [com.stuartsierra.component :as component]
             [aero.core :as aero]
             [clojure.java.io :as io]
-            [clojure.tools.logging :as log]))
+            [clojure.pprint :refer [pprint]]))
 
 (defn- get-config-path [profile]
   (format "config/nxt/%s.edn" (name profile)))
@@ -14,8 +14,12 @@
    (let [config-path (get-config-path profile)]
      (if-let [config-resource (io/resource config-path)]
        (do
-         (log/infof "Reading config from %s" config-path)
-         (aero/read-config config-resource))
+         (println "\nReading config from:" config-path)
+         (let [config (aero/read-config config-resource)]
+           (println "\nLoaded configuration:")
+           (println "--------------------")
+           (pprint config)
+           config))
        (throw (ex-info (format "Config file not found: %s" config-path)
                       {:profile profile
                        :path config-path}))))))
@@ -24,13 +28,13 @@
   component/Lifecycle
   
   (start [this]
-    (println ";; Starting Config")
+    (println "\n;; Starting Config component")
     (if config
       this
       (assoc this :config (read-config profile))))
   
   (stop [this]
-    (println ";; Stopping Config")
+    (println "\n;; Stopping Config component")
     (assoc this :config nil)))
 
 (defn new-config
