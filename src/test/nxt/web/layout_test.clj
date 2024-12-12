@@ -9,8 +9,8 @@
       (is (string? html))
       (is (str/includes? html "<title>Test Page</title>"))
       (is (str/includes? html "<p>Hello</p>"))
-      (is (str/includes? html "htmx.org")) ; HTMX script included
-      (is (str/includes? html "bulma.min.css")))) ; Bulma CSS included
+      (is (str/includes? html "htmx.org"))
+      (is (str/includes? html "bulma.min.css"))))
   
   (testing "Default title when not provided"
     (let [html (layout/page-template {} [:p "Content"])]
@@ -31,12 +31,12 @@
     (let [html (layout/home-page)]
       (is (string? html))
       (is (str/includes? html "Hello World"))
-      (is (str/includes? html "title")) ; Has a title
-      (is (str/includes? html "subtitle")))) ; Has a subtitle
+      (is (str/includes? html "title"))
+      (is (str/includes? html "subtitle"))))
   
   (testing "Home page has required CSS classes"
     (let [html (layout/home-page)]
       (is (str/includes? html "class=\"title\""))
       (is (str/includes? html "class=\"subtitle\""))
       (is (str/includes? html "class=\"section\""))
-      (is (str/includes? html "class=\"container\""))))
+      (is (str/includes? html "class=\"container\"")))))
