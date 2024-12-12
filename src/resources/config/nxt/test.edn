@@ -1,0 +1,17 @@
+{:env :test
+
+ ;; Import base configuration 
+ :base #include "base.edn"
+ 
+ ;; Test specific overrides
+ :server
+ {:port 8081
+  :host "localhost"
+  :join? false}
+ 
+ :http
+ {:allowed-origins ["http://localhost:8081"]}
+ 
+ :log
+ {:level :warn
+  :console? false}}
