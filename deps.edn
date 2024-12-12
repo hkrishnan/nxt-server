@@ -9,7 +9,7 @@
   
   com.stuartsierra/component      {:mvn/version "1.1.0"}
   
-  ;; Update logging dependencies
+  ;; Logging
   org.clojure/tools.logging       {:mvn/version "1.2.4"}
   ch.qos.logback/logback-classic  {:mvn/version "1.4.14"}
   org.slf4j/slf4j-api            {:mvn/version "2.0.11"}
@@ -21,4 +21,21 @@
  {:dev
   {:extra-paths ["src/dev"]
    :extra-deps  {com.stuartsierra/component.repl {:mvn/version "1.0.0"}
-                 org.clojure/tools.namespace      {:mvn/version "1.4.4"}}}}}
+                 org.clojure/tools.namespace     {:mvn/version "1.4.4"}}}
+
+  :test
+  {:extra-paths ["src/test"]
+   :extra-deps {io.github.cognitect-labs/test-runner {:git/tag "v0.5.1" :git/sha "dfb30dd"}
+                org.clojure/test.check              {:mvn/version "1.1.1"}}}
+
+  :coverage
+  {:extra-deps {cloverage/cloverage {:mvn/version "1.2.4"}}
+   :main-opts ["-m" "cloverage.coverage" 
+               "-p" "src/main" 
+               "-s" "src/test"
+               "--output" "target/coverage"
+               "--junit"
+               "--codecov"
+               "--html"
+               "--name" "nxt-server-coverage"
+               "--ns-regex" "^nxt.*"]}}}

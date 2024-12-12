@@ -19,3 +19,7 @@
 
 # Generated Files
 target/
+coverage/
+
+# Test coverage reports
+target/coverage/

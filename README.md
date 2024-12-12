@@ -23,19 +23,40 @@ A Clojure web application using:
 
 2. Start the system:
    ```clojure
-   (dev/start)
+   (dev/go)
    ```
 
 3. Visit http://localhost:3000
 
 ### Development Commands
 
-- `(dev/start)` - Start the system
-- `(dev/stop)` - Stop the system
-- `(dev/reset)` - Reset the system (stop, reload code, start)
-- `(dev/system-status)` - Check system status
-- `(dev/print-routes)` - List available routes
-- `(dev/print-config)` - View current configuration
+- `(dev/go)`           Start the system
+- `(dev/stop)`         Stop the system
+- `(dev/reset)`        Reset the system (stop, reload code, start)
+- `(dev/status)`       Check system status
+- `(dev/routes)`       List available routes
+- `(dev/print-config)` View current configuration
+
+### Testing
+
+Run tests:
+```bash
+clj -X:test
+```
+
+Run tests with coverage:
+```bash
+# Using the convenience script
+./scripts/test-coverage.sh
+
+# Or directly with clojure
+clj -M:coverage
+```
+
+Coverage reports will be generated in:
+- HTML report: target/coverage/index.html
+- Codecov report: target/coverage/codecov.json
+- JUnit report: target/coverage/junit.xml
 
 ### Configuration
 
