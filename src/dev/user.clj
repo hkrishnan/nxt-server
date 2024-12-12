@@ -21,5 +21,4 @@ For more tools, explore the (dev) namespace.
 (def halt stop)
 
 ;; Initialize the development system
-(set-init (fn [] 
-           ((requiring-resolve 'dev/new-dev-system))))
+(set-init #(dev/new-dev-system))  ;; Changed to use # shorthand for fn
