@@ -9,7 +9,7 @@
  :http
  {:allowed-origins #profile
   {:dev ["http://localhost:3000"]
-   :test ["http://localhost:3000"]
+   :test ["http://localhost:8081"]
    :prod [#env ALLOWED_ORIGINS]}
   
   :secure-headers {"Content-Security-Policy" 
