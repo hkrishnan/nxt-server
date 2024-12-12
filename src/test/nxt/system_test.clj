@@ -17,7 +17,7 @@
         (is (some? (-> started :config :config)))
         
         (testing "Components are properly initialized"
-          (is (= "test" (-> started :config :config :env)))
+          (is (= :test (-> started :config :config :env)))  ; Changed expectation to keyword
           (is (= 8081 (-> started :config :config :server :port))))
         
         (testing "Stop sequence"
