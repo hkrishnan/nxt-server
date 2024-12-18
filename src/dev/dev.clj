@@ -46,3 +46,8 @@
   (println "\nCurrent Configuration:")
   (println "----------------------")
   (pprint (-> system :config :config)))
+
+(comment
+  (go)
+  (status)
+  )

@@ -13,3 +13,7 @@ Available commands:
 (dev/routes)      List available routes
 (dev/config)      View current configuration
 ")
+
+(comment
+  (dev/go)
+  )
