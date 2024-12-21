@@ -1,0 +1,31 @@
+{:env #profile
+ {:dev :development
+  :test :test
+  :prod :production}
+ 
+ :server {:port #profile 
+          {:dev 8890
+           :test 8891
+           :prod 8080}
+          :join? false}
+ 
+ :log-level #profile
+ {:dev :debug
+  :test :warn
+  :prod :info}
+ 
+ :app {:name "NXT Server"
+       :version "1.0.0"}
+
+ :session {:session-valid-minutes #profile
+           {:dev 120
+            :test 30
+            :prod 60}
+           :token-valid-minutes #profile
+           {:dev 480
+            :test 60
+            :prod 240}
+           :refresh-token-valid-minutes #profile
+           {:dev 1440
+            :test 120
+            :prod 720}}}

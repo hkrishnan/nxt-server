@@ -2,6 +2,9 @@
  ["src/main"
   "src/resources"]
 
+ :mvn/repos
+ {"datomic-cloud" {:url "s3://datomic-releases-1fc2183a/maven/releases"}}
+
  :deps
  {io.pedestal/pedestal.service   {:mvn/version "0.7.0"}
   io.pedestal/pedestal.route     {:mvn/version "0.7.0"}
@@ -19,6 +22,14 @@
 
   com.rpl/specter                {:mvn/version "1.1.4"}
   funcool/cuerdas                {:mvn/version "2023.11.09-407"}
+  camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}
+  clojure.java-time/clojure.java-time {:mvn/version "1.4.2"}
+  tick/tick                      {:mvn/version "0.7.5"}
+
+  ;; Datomic
+  com.datomic/dev-local         {:mvn/version "1.0.243"}
+  com.datomic/client-cloud      {:mvn/version "1.0.119"}
+  com.datomic/ion              {:mvn/version "1.0.57"}
   }
 
  :aliases

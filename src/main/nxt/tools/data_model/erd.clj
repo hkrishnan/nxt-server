@@ -1,98 +1,113 @@
 (ns nxt.tools.data-model.erd
-  (:require [com.rpl.specter :refer :all :as specter]
+  (:require [com.rpl.specter  :as specter]
             [cuerdas.core :as cue]
-    ;[datomic.client.api :as d]
             )
 )
 
-;;rel-comp-belongs-to
-;;([will/may-have-many & has-one]
-;;; This FDT will create a ref/component/non-required attr for the MAJOR entity with a cardinality of MANY
-;;; The FK attr will be required.
-;;; The FK attr will be PART OF PPK.)
-
-;;rel-comp-extension-of
-;;([will/may-have-one & has-one]
-;;; This FDT will create a ref/component/non-required attr for the MAJOR entity with a cardinality of ONE
-;;; The FK attr will be required.
-;;; The FK attr will be the ONLY PPK.)
-
-;;rel-non-comp-belongs-to
-;;([will/may-have-many & has-one]
-;;; This FDT will create a ref/NON-component/required attr for the MINOR entity with a cardinality of ONE
-;;; The FK attr will be required.
-;;; The FK attr will be PART OF PPK.)
-
-;;rel-non-comp-extension-of
-;;([will/may-have-one & has-one]
-;;; This FDT will create a ref/NON-component/required attr for the MINOR entity with a cardinality of ONE
-;;; The FK attr will be required.
-;;; The FK attr will be the ONLY PPK.)
 
 
-;Rel-optional-has-one-required (will be a required attr).
-;;; This FDT will create a ref attr for the minor entity with a cardinality of ONE.
-;;; The FK attr will be required.
-;;; The FK attr will NOT be PART OF PPK.)
-;;;;
-;Rel-optional ([may-have-many & may-have-one] â‡’ has-one-optional (will be an optional attr).
-; This FDT will create a ref attr for the minor entity with a cardinality of ONE.
-; The FK attr will be optional.
-; The FK attr will NOT be a PPK)
-;;;;;
-;Rel-has-valid-value
+;;
+;;
+;;;;region Description
+;;-----------------------------
+;;Rel-optional-comp-belongs-to
+;; rel-comp-belongs-to
+;; belongs-to
+;;-----------------------------
+;;This is the “relationship non-required component belongs to” or “relationship optional component belongs to”.  Let’s say we have two entities, A and B. A “will/may-have-many” B’s; or A has “zero or many” B’s, and B “has-one” A.  B “belongs to” A.  There cannot be a B without A existing. A is an independent (major) entity, and B is the dependent (minor) entity. A can be created with no B’s.
+;;
+;;
+;;When I describe this relationship between A and B, you (LLM) should automatically add an attribute “has-many-<B>s” on A with the datatype “ref” and cardinality “many”.  This attribute will not be required (optional).  And it will be a component attribute.
+;;
+;;The entity B will have the “ref-<A>” attribute.  This is also called a FK attr.  This attribute or attr will be a required attribute.  Its datatype will be ref, and cardinality, “one”.  This attribute will be a part of B's primary key (PART OF PPK).  The convention is that this will be the first attr in the composite primary key.
+;;
+;;-----------------------------
+;;rel-required-comp-belongs-to
+;;;-----------------------------
+;;This is the “relationship required component belongs to””.  Let’s say we have two entities, A and B. A “will have one-or-many” B’s, or A has “one or many” B’s, and B “has-one” A.  B “belongs to” A.  There cannot be a B without A existing. A is an independent (major) entity, and B is the dependent (minor) entity.  When A is created, at least one B should be defined.
+;;
+;;
+;;When I describe this relationship between A and B, you should automatically add an attribute “has-many-<B>s” on A with the datatype “ref” and cardinality “many”.  This attribute will be required.  And it will be a component attribute.
+;;
+;;The entity B will have the “ref-<A>” attribute.  This is also called a FK attr.  This attribute or attr will be a required attribute.  Its datatype will be ref, and cardinality, “one”.  This attribute will be a part of B's primary key (PART OF PPK).  The convention is that this will be the first attr in the composite primary key.
+;;
+;;
+;;
+;;-----------------------------
+;;rel-required-comp-extension-of
+;;-----------------------------
+;;
+;;This is the “relationship required component extension of”.  Let’s say we have two entities A and B. A “will have one” B; or A has one  B, and B “has-one” A.  B “belongs to” A.  When A is created, B also will be created. There cannot be a B without A existing. A is an independent (major) entity, and B is the dependent (minor) entity.
+;;
+;;
+;;We may say “B is a required extension of” entity A.
+;;
+;;
+;;When I describe this relationship between A and B, you should automatically add an attribute “has-one-<B>” on A with the datatype “ref” and cardinality “one”.  This attribute will be a required attribute.  And it will be a component attribute.
+;;
+;;The entity B will have the “ref-<A>” attribute.  This is also called a FK attr.  This attribute or attr will be a required attribute.  Its datatype will be ref, and cardinality, “one”.  This attribute will be the only primary key (ONLY PPK) of B.
+;;
+;;-----------------------------
+;;rel-optional-comp-extension-of
+;; rel-comp-extension-of
+;; extension-of
+;;-----------------------------
+;;
+;;This is the “relationship non-required component extension of”.  Let’s say we have two entities A and B. A “will/may-have-one” B; or A has one or zero B, and B “has-one” A.  B “belongs to” A.  There cannot be a B without A existing. But A can be created without B. A is an independent (major) entity, and B is the dependent (minor) entity.
+;;
+;;We may say “B is an optional extension of” entity A.
+;;
+;;
+;;When I describe this relationship between A and B, you should automatically add an attribute “has-one-<B>” on A with the datatype “ref” and cardinality “one”.  This attribute will not be required.  And it will be a component attribute.
+;;
+;;The entity B will have the “ref-<A>” attribute.  This is also called a FK attr.  This attribute or attr will be a required attribute.  Its datatype will be ref, and cardinality, “one”.  This attribute will be the only primary key (ONLY PPK) of B.
+;;
+;;-----------------------------
+;;rel-optional-has-one-required
+;;-----------------------------
+;;
+;;This is the “relationship optional has one required””.  Let’s say we have two entities, A and B. A “will have zero-or-many” B’s, or A has “zero or many” B’s, and B “has one” A. There cannot be a B without A existing. A is an independent (major) entity. A is an attribute of B.
+;;
+;;
+;;When I describe this relationship between A and B, the entity B will have the “ref-<A>” attribute.  This is also called a FK attr.  This attribute or attr will be a required (not optional) attribute.  Its datatype will be ref, and cardinality, “one”.  A is the prompt entity. The FK attr will NOT be PART OF PPK.
+;;
+;;-----------------------------
+;;rel-optional-has-one-optional
+;;-----------------------------
+;;
+;;This is the “relationship optional has one optional””.  Let’s say we have two entities, A and B. A “will have zero-or-many” B’s, or A has “zero or many” B’s, and B “has one” A. A is an independent (major) entity. A is an attribute of B.
+;;
+;;
+;;When I describe this relationship between A and B, the entity B will have the “ref-<A>” attribute.  This is also called a FK attr.  This attribute or attr will be an optional (not required) attribute.  Its datatype will be ref, and cardinality, “one”.  A is the prompt entity. The FK attr will NOT be PART OF PPK.
+;;;;endregion
+;;
 
 
-;tennat -> application
-;has-many-applications
-;has-<child-entity-k-name+"s"> with cardinality many and dt ref - > app, entity - component
-
-;;has-one-user-profile
-;;has-<child-entity-k-name> with cardinality one and dt ref -. app, entity, component
-
-;;has-a-data-type
-;;has-a-<to-entity-entity-k-name> with cardinaluty one and dt ref - app, entity, non-component
-;[if a different ap than the current one, then there is no need for the ref attr.]
 
 
-#_(try-let [value (func-that-throws)]
-           (act-on-value value)
-           (catch Exception e
-             (log/error e "func-that-throws failed")))
 
-;; the  :list-attr? false for the following
-#_(def entity-system-attr-strings [
-                                   "has-many-"
-                                   "has-one-"
-                                   "has-a-"
-                                   "pkey-"
-                                   "ref-"
-                                   ])
 
 (defn description-attr []
-  (identity {
-             :k-name        "description"
-             :description   "description"
-             :data-type     {:type "string" :entity-related-to {:app nil :entity nil}}
-             :cardinality   "one"
-             :primary-key   {:pc-primary? false :order 0}
-             :alternate-key {:pc-alternate? false :order 0}
-             :gen-type      {:type "util" :attr-linked-to nil}
+  {
+   :k-name        "description"
+   :description   "description"
+   :short-label   "Description"
+   :long-label    "Description"
 
-             :required?     true
+   :data-type     {:type "string" :entity-related-to {:app nil :entity nil}}
+   :gen-type      {:type "util" :attr-linked-to nil}
 
-             :component?    false
-             :history?      true
+   :cardinality   "one"
+   :required?     true
+   :component?    false
+   :active?       true
+   :history?      true
+   :search-attr?  false
 
-             :active?       true
-             :search-attr?  false
-
-
-             :short-label   "Description"
-             :long-label    "Description"
-
-             }))
-;;In inow-tools, k-name, if present will always be part of the Composite Primary Key.  SO it needs a key order.
+   :primary-key   {:pc-primary? false :order 0}
+   :alternate-key {:pc-alternate? false :order 0}
+   })
+;;In nxt-tools, k-name, if present will always be part of the Composite Primary Key.  SO it needs a key order.
 (defn k-name-attr [pcpk-order]
   (let [pcalt-order 0]
     (identity {
@@ -250,7 +265,7 @@
   (identity {
              :k-name        (if (nil? attr-k-name) (str "ref-" rel-entity) attr-k-name)
              :description   "reference to the parent entity"
-             :data-type     {:type "rel-comp-belongs-to" :entity-related-to {:app                 rel-app :entity rel-entity
+             :data-type     {:type "rel-optional-comp-belongs-to" :entity-related-to {:app                 rel-app :entity rel-entity
                                                                              :comp-attr-required? comp-attr-required?}}
              :cardinality   "one"
              :primary-key   {:pc-primary? true :order pcpk-order}
@@ -299,7 +314,7 @@
   (identity {
              :k-name        (if (nil? attr-k-name) (str "ref-" rel-entity) attr-k-name)
              :description   "reference to the parent entity"
-             :data-type     {:type "rel-comp-extension-of" :entity-related-to {:app                 rel-app :entity rel-entity
+             :data-type     {:type "rel-optional-comp-extension-of" :entity-related-to {:app                 rel-app :entity rel-entity
                                                                                :comp-attr-required? comp-attr-required?}}
              :cardinality   "one"                           ;; will be defaulted based on the type above anyway
              :primary-key   {:pc-primary? true :order pcpk-order}
@@ -381,7 +396,7 @@
   (identity {
              :k-name                  (if (nil? attr-k-name) (str "ref-" rel-entity) attr-k-name)
              :description             "referene to another entity, and is optional"
-             :data-type               {:type "rel-optional" :entity-related-to {:app rel-app :entity rel-entity}}
+             :data-type               {:type "rel-optional-has-one-optional" :entity-related-to {:app rel-app :entity rel-entity}}
              :cardinality             "one"                 ;; will be defaulted based on the type above anyway
              :primary-key             {:pc-primary? false :order 0} ;; ppk? will be defaulted based on the type above anyway
              :alternate-key           {:pc-alternate? false :order 0}
@@ -580,14 +595,14 @@
 
 ;;kebab-case-name
 (defn tools-erd-model []
-  (let [inow-tenant "inow"
-        inow-app    "itools"]
+  (let [nxt-tenant "nxt"
+        nxt-app    "itools"]
     (identity
       ;;Beginning of ERD
       {
        ;;what tenant? and what app?
-       :tenant   inow-tenant
-       :app      inow-app
+       :tenant   nxt-tenant
+       :app      nxt-app
        :entities [
                   ;;Entity - Tenant
                   {
@@ -900,14 +915,14 @@
 
 
 (defn tools-erd-model-2 []
-  (let [inow-tenant "inow"
-        inow-app    "itools"]
+  (let [nxt-tenant "nxt"
+        nxt-app    "itools"]
     (identity
       ;;Beginning of ERD
       {
        ;;what tenant? and what app?
-       :tenant   inow-tenant
-       :app      inow-app
+       :tenant   nxt-tenant
+       :app      nxt-app
        :entities [
                   ;;Entity - Tenant
                   {
@@ -1585,8 +1600,8 @@
                                                      :pcaltk-order 0
                                                      ;:comp-attr-required? true ;;forces to create a label
                                                      })
-                                 ;;k-name is required to distinguish from customer added code with inow code.
-                                 ;;new releases from inow can override customer code, otherwise.
+                                 ;;k-name is required to distinguish from customer added code with nxt code.
+                                 ;;new releases from nxt can override customer code, otherwise.
                                  (k-name-attr 2)
                                  {
                                   :k-name        "order"
@@ -3904,13 +3919,13 @@
   )
 
 (defn tools-erd []
-  (let [inow-tenant "inow"
-        inow-app    "itools"]
+  (let [nxt-tenant "nxt"
+        nxt-app    "itools"]
     (identity
       ;;Beginning of ERD
       {
-       :tenant   inow-tenant
-       :app      inow-app
+       :tenant   nxt-tenant
+       :app      nxt-app
        :entities (into [] (nthrest (specter/select [specter/ALL] (into [] (flatten (:entities (tools-erd-model))))) 0))
 
        ;:entities  [(nth (specter/select [ALL ] (:entities (tools-erd-model))))]
@@ -3918,4 +3933,8 @@
        ;:entities (into []  (:entities (tools-erd-model)))
 
        })))
+
+(comment
+  (tools-erd)
+  )
 

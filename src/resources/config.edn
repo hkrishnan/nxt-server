@@ -1,3 +1,0 @@
-{:server {:port #long #or [#env PORT 3000]
-         :join? false}
- :env   #or [#env ENVIRONMENT "dev"]}
